@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O LAN · Điều khiển</title>
+<link rel="stylesheet" href="/static/common.css">
+<style>
+  body { font-size: 15px; }
+  #app { display: grid; grid-template-rows: auto 1fr; min-height: 100%; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 16px; background: var(--stage); border-bottom: 1px solid var(--line); }
+  .bar .brand { font-weight: 700; margin-right: 8px; }
+  .bar .brand b { color: var(--gold); }
+  .bar .brand { display: inline-flex; align-items: center; gap: 8px; }
+  .bar-logo { width: 40px; height: 40px; object-fit: contain; }
+  .bar .sp { flex: 1; }
+  .bar a { color: var(--muted); }
+  .rounds { display: flex; gap: 4px; flex-wrap: wrap; }
+  .rounds button.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .grid { display: grid; grid-template-columns: 300px 1fr 380px; gap: 14px; padding: 14px; align-items: start; }
+  @media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px; display: grid; gap: 10px; }
+  .panel h2 { margin: 0; font-size: 1rem; color: var(--muted); font-weight: 600; }
+  .qlist { display: grid; gap: 6px; max-height: 60vh; overflow: auto; }
+  .qitem { text-align: left; display: grid; gap: 2px; background: transparent; }
+  .qitem.active { background: var(--lane); border-color: var(--gold); }
+  .qitem small { color: var(--muted); }
+  .cur .text { font-size: 1.35rem; line-height: 1.35; }
+  .cur .answer { color: var(--gold); font-size: 1.15rem; font-weight: 700; }
+  .cur .q-media { max-width: 100%; max-height: 220px; border-radius: var(--r-sm); }
+  .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .timer { font-size: 3rem; font-weight: 700; line-height: 1; }
+  .timer.low { color: var(--red); }
+  .buzzState { padding: 10px; border-radius: var(--r-sm); background: rgba(255,255,255,.06); }
+  .buzzState.win { background: var(--gold); color: var(--ink); font-weight: 700; }
+  .team { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-sm); background: rgba(14,47,134,.6); border: 2px solid transparent; }
+  .team.win { border-color: var(--gold); }
+  .team.cur { border-color: var(--paper); }
+  .team .hd { display: flex; justify-content: space-between; align-items: baseline; }
+  .team .nm { font-weight: 700; }
+  .team .sc { font-size: 1.8rem; font-weight: 700; }
+  .team .ans { color: var(--gold); }
+  .team.dim { opacity: .45; }
+  #teamPick { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-sm); background: rgba(245,183,0,.1); border: 1px solid var(--gold); }
+  #teamPick:empty { display: none; }
+  #teamPick .row button { flex: 1 1 auto; white-space: nowrap; padding-left: .6em; padding-right: .6em; }
+  .pkgs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .pkgs button { display: grid; gap: 2px; padding: .6em .4em; }
+  .pkgs button b { font-size: 1.4rem; }
+  .pkgs button small { color: var(--muted); }
+  .pkgs button.gold small { color: var(--ink); }
+  details summary { cursor: pointer; color: var(--muted); }
+  .kwpick { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .kwpick button { width: 2.4em; height: 2.4em; padding: 0; font-weight: 800; font-size: 1.05rem; }
+  .kwpick .gap { width: 12px; }
+  .team .muted, .muted { color: var(--muted); font-size: .9rem; }
+  .dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--red); margin-right: 4px; }
+  .dot.on { background: var(--green); }
+  .rowsTable { display: grid; gap: 8px; }
+  .rowsTable .r { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; align-items: center; }
+  .sndGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .sndGrid button { text-align: left; font-size: .88rem; padding: .45em .7em; }
+  .sndGrid .grp { grid-column: 1 / -1; color: var(--muted); font-size: .85rem; margin-top: 4px; }
+  #notice { margin: 14px 14px 0; padding: 12px 16px; border-radius: var(--r-sm); background: var(--red); color: #fff; font-weight: 700; }
+  .log { max-height: 220px; overflow: auto; font-size: .85rem; color: var(--muted); display: grid; gap: 2px; }
+  .modeOfficial { color: var(--gold); font-weight: 700; }
+  /* Ngân hàng câu hỏi */
+  #viewToggle.on { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .bank { display: grid; grid-template-columns: 220px 1fr 420px; gap: 14px; padding: 14px; align-items: start; }
+  @media (max-width: 1200px) { .bank { grid-template-columns: 1fr; } }
+  .sections { display: grid; gap: 6px; }
+  .sections button { text-align: left; display: flex; justify-content: space-between; gap: 8px; }
+  .sections button.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .bankList { display: grid; gap: 8px; max-height: 72vh; overflow: auto; }
+  .bitem { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 10px 12px;
+    border-radius: var(--r-sm); background: rgba(255,255,255,.05); border: 1px solid transparent; }
+  .bitem.sel { border-color: var(--gold); }
+  .bitem .bt { line-height: 1.4; }
+  .bitem .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); font-size: .88rem; margin-top: 4px; }
+  .bitem .meta .a { color: var(--gold); }
+  .bitem .row button { padding: .35em .7em; }
+  .live { color: var(--ink); background: var(--gold); border-radius: 99px; padding: 0 .6em; font-size: .8rem; }
+  .form { display: grid; gap: 12px; }
+  .form label { display: grid; gap: 4px; color: var(--muted); font-size: .9rem; }
+  .form textarea { background: rgba(255,255,255,.06); color: var(--paper); border: 1px solid var(--line); border-radius: var(--r-sm);
+    padding: .6em .8em; font: inherit; resize: vertical; }
+  .form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .upload { display: inline-block; cursor: pointer; padding: .55em 1em; border: 1px dashed var(--muted); border-radius: var(--r-sm); color: var(--paper) !important; }
+  .preview img, .preview video { max-width: 100%; max-height: 180px; border-radius: var(--r-sm); }
+  .preview audio { width: 100%; }
+  .msg { min-height: 1.2em; font-size: .9rem; }
+  .msg.ok { color: var(--green); } .msg.err { color: #ff8a8c; }
+  kbd { border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: .8em; }
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <form id="loginForm">
+    <img class="gate-logo" data-brand="logo" src="/media/images/logo.png" alt="Logo cuộc thi">
+    <p class="gate-name" data-brand="name"></p>
+    <h1>Điều khiển O LAN</h1>
+    <p>Nhập mật khẩu quản trị trong config.json.</p>
+    <input id="pw" type="password" placeholder="Mật khẩu" required>
+    <button class="gold" type="submit">Đăng nhập</button>
+    <div class="err" id="err"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <div class="bar">
+    <span class="brand"><img class="bar-logo" data-brand="logoSmall" src="/media/images/logo-256.png" alt="">OLYMPIA APP <b>O LAN</b></span>
+    <select id="mode" title="Chế độ">
+      <option value="PRACTICE">Tập luyện</option>
+      <option value="DEMO">Chạy thử</option>
+      <option value="OFFICIAL">Thi chính thức</option>
+    </select>
+    <div class="rounds" id="rounds">
+      <button data-r="kdrieng">KĐ lượt riêng</button>
+      <button data-r="khoidong">KĐ lượt chung</button>
+      <button data-r="vcnv">Vượt chướng ngại vật</button>
+      <button data-r="tangtoc">Tăng tốc</button>
+      <button data-r="vedich">Về đích</button>
+      <button data-r="phu">Câu hỏi phụ</button>
+    </div>
+    <span class="sp"></span>
+    <button id="viewToggle">Ngân hàng câu hỏi</button>
+    <span class="muted" id="ips"></span>
+    <button class="ghost hidden" data-a="programIntro" id="btnProgIntro">▶ Intro chương trình</button>
+    <a href="/led" target="_blank">Mở LED</a>
+  </div>
+
+  <div id="notice" class="hidden"></div>
+  <div class="grid" id="controlView">
+    <!-- Cột trái: danh sách câu hỏi / điều khiển vòng -->
+    <div style="display:grid; gap:14px">
+      <section class="panel"><h2 id="listTitle">Câu hỏi</h2><div class="qlist" id="qlist"></div></section>
+      <section class="panel" id="roundPanel"></section>
+    </div>
+
+    <!-- Cột giữa: câu hiện tại -->
+    <div style="display:grid; gap:14px">
+      <section class="panel cur" id="cur"></section>
+      <section class="panel">
+        <div class="row" style="justify-content:space-between">
+          <div class="timer" id="timer">–</div>
+          <div class="buzzState" id="buzzState">Chuông đang đóng</div>
+        </div>
+        <div class="row">
+          <button data-a="show">Hiện câu hỏi</button>
+          <button class="gold" data-a="start">Bắt đầu <kbd>S</kbd></button>
+          <button data-a="pause">Tạm dừng</button>
+          <button data-a="resume">Tiếp tục</button>
+          <button data-a="stop">Dừng</button>
+        </div>
+        <div class="row">
+          <button data-a="toggleAnswer" id="btnAns">Hiện đáp án <kbd>A</kbd></button>
+          <button data-a="toggleReveal" id="btnReveal">Công bố đáp án các đội</button>
+          <button data-media="play">▶ Phát media</button>
+          <button data-media="pause">⏸</button>
+          <button data-media="restart">⟲</button>
+        </div>
+        <div class="row">
+          <button data-a="openBuzzer" data-p="answer">Mở chuông</button>
+          <button data-a="resetBuzzer">Đặt lại chuông</button>
+          <span style="flex:1"></span>
+          <button data-a="intro">▶ Chạy lại intro</button>
+          <button class="ghost" data-a="skipIntro">⏭ Bỏ qua intro</button>
+          <button class="gold" data-a="toggleTotal" id="btnTotal">Công bố tổng điểm</button>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="row" style="justify-content:space-between">
+          <h2>Âm thanh trên LED</h2>
+          <span class="row">
+            <button class="ghost" id="sndAll">Hiện tất cả</button>
+            <button class="bad" data-a="stopSound">■ Dừng âm thanh</button>
+          </span>
+        </div>
+        <div class="muted">Âm thanh chuông, đúng/sai, mở câu hỏi, nhạc đồng hồ… tự phát theo thao tác. Bấm tên file để phát tay trên LED.</div>
+        <div class="sndGrid" id="sndBoard"></div>
+      </section>
+      <section class="panel">
+        <h2>Dòng chữ trên LED</h2>
+        <div class="row"><input id="bannerText" style="flex:1" maxlength="120" placeholder="Ví dụ: Nghỉ giải lao 5 phút">
+          <button id="bannerSet">Hiện</button><button id="bannerClear" class="ghost">Ẩn</button></div>
+      </section>
+      <section class="panel">
+        <h2>Nhật ký</h2>
+        <div class="log" id="log"></div>
+        <div class="row">
+          <button class="ghost" data-a="reloadQuestions">Nạp lại ngân hàng câu hỏi</button>
+          <button class="bad" id="reset">Làm mới cuộc thi</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Cột phải: các đội -->
+    <section class="panel"><h2>Các đội</h2><div id="teamPick"></div><div id="teams" style="display:grid; gap:10px"></div></section>
+  </div>
+
+  <!-- NGÂN HÀNG CÂU HỎI -->
+  <div class="bank hidden" id="bankView">
+    <aside class="panel">
+      <h2>Phần thi</h2>
+      <div class="sections" id="sections"></div>
+    </aside>
+
+    <section class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2 id="bankTitle"></h2>
+        <button class="gold" id="bankNew">Thêm câu hỏi</button>
+      </div>
+      <div class="msg" id="bankMsg"></div>
+      <form class="form hidden" id="vcnvForm">
+        <div class="two">
+          <label>Từ khóa<input id="kwInput" maxlength="60" required></label>
+          <label>Hình chướng ngại vật<select id="kwImage"></select></label>
+        </div>
+        <div id="kwPreview" class="preview"></div>
+        <div class="row">
+          <label class="upload">Tải hình lên<input type="file" id="kwUpload" accept=".jpg,.jpeg,.png,.webp,.gif,.svg" hidden></label>
+          <button class="gold" type="submit">Lưu từ khóa và hình</button>
+        </div>
+      </form>
+      <div class="bankList" id="bankList"></div>
+    </section>
+
+    <section class="panel">
+      <form class="form" id="qForm">
+        <h2 id="edTitle">Thêm câu hỏi</h2>
+        <label>Nội dung câu hỏi<textarea id="fText" rows="4" maxlength="1000" required></textarea></label>
+        <label>Đáp án<input id="fAnswer" maxlength="300" required></label>
+        <div id="fAnswerPreview"></div>
+        <div class="two">
+          <label>Thời gian (giây)<input id="fTime" type="number" min="1" max="600" required></label>
+          <label id="fPointsWrap">Điểm<input id="fPoints" type="number" min="1" max="1000"></label>
+        </div>
+        <label>Media đi kèm
+          <select id="fMediaType">
+            <option value="">Không có</option>
+            <option value="image">Hình ảnh</option>
+            <option value="video">Video</option>
+            <option value="audio">Âm thanh</option>
+          </select>
+        </label>
+        <div id="fMediaPick" class="hidden form">
+          <select id="fMediaSrc"></select>
+          <div><label class="upload">Tải file lên<input type="file" id="fUpload" hidden></label></div>
+          <div id="fPreview" class="preview"></div>
+        </div>
+        <div class="msg err" id="fErr"></div>
+        <div class="row">
+          <button class="gold" type="submit" id="fSave">Thêm câu hỏi</button>
+          <button class="ghost" type="button" id="fCancel">Hủy</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/static/common.js"></script>
+<script>
+const socket = io();
+let S = null, mediaKey = '';
+const send = (type, extra = {}) => socket.emit('admin', { type, ...extra });
+
+function hello(password) {
+  socket.emit('hello', { role: 'admin', password }, r => {
+    if (!r.ok) { $('#err').textContent = r.error; sessionStorage.removeItem('olan-admin'); return; }
+    sessionStorage.setItem('olan-admin', password);
+    $('#gate').classList.add('hidden'); $('#app').classList.remove('hidden');
+  });
+}
+$('#loginForm').onsubmit = e => { e.preventDefault(); Sound.unlock(); hello($('#pw').value); };
+socket.on('connect', () => { const p = sessionStorage.getItem('olan-admin'); if (p) hello(p); });
+
+// Nút tĩnh
+document.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.r) {
+    if (S && S.round !== 'idle' && S.round !== b.dataset.r && !confirm(`Chuyển sang phần "${b.textContent}"?`)) return;
+    send('setRound', { round: b.dataset.r });
+  }
+  else if (b.dataset.a) send(b.dataset.a, { purpose: b.dataset.p });
+  else if (b.dataset.media) send('media', { cmd: b.dataset.media });
+});
+$('#mode').onchange = e => {
+  if (e.target.value === 'OFFICIAL' && !confirm('Chuyển sang chế độ THI CHÍNH THỨC?')) { e.target.value = S.mode; return; }
+  send('setMode', { mode: e.target.value });
+};
+$('#bannerSet').onclick = () => send('banner', { text: $('#bannerText').value });
+$('#bannerClear').onclick = () => send('banner', { text: '' });
+$('#reset').onclick = () => {
+  if (S.mode === 'OFFICIAL') {
+    const pw = prompt('Đang thi chính thức. Nhập mật khẩu quản trị để đưa toàn bộ điểm về 0:');
+    if (pw) send('resetGame', { password: pw });
+  } else if (confirm('Đưa toàn bộ điểm về 0 và làm mới cuộc thi?')) send('resetGame');
+};
+document.addEventListener('keydown', e => {
+  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (!$('#bankView').classList.contains('hidden')) return;
+  if (e.key === 's' || e.key === 'S') send('start');
+  if (e.key === 'a' || e.key === 'A') send('toggleAnswer');
+});
+
+socket.on('state', s => { S = s; render(); });
+socket.on('tick', t => showTimer(t));
+socket.on('buzz', () => Sound.buzz());
+
+function showTimer(t) {
+  const sec = secs(t.remaining);
+  $('#timer').textContent = t.duration ? sec : '–';
+  $('#timer').classList.toggle('low', t.running && sec <= 5);
+}
+const tname = id => S.teams.find(t => t.id === Number(id))?.name || '';
+
+function render() {
+  const s = S;
+  $('#mode').value = s.mode;
+  document.querySelectorAll('#rounds button').forEach(b => b.classList.toggle('active', b.dataset.r === s.round));
+  $('#ips').textContent = (s.ips || []).map(ip => `${ip}:${s.port}`).join('  ');
+  showTimer(s.timer);
+  $('#btnAns').classList.toggle('on', s.showAnswer);
+  $('#btnReveal').classList.toggle('on', s.revealAnswers);
+  $('#btnTotal').textContent = s.showTotal ? 'Ẩn bảng tổng điểm' : 'Công bố tổng điểm';
+  $('#btnTotal').classList.toggle('on', s.showTotal);
+
+  // Danh sách câu hỏi
+  $('#listTitle').textContent = s.round === 'kdrieng' ? `Lượt riêng – ${tname(s.kdrieng?.current)}` : s.round === 'vcnv' ? 'Hàng ngang' : s.round === 'vedich' ? 'Về đích' : 'Câu hỏi';
+  $('#qlist').innerHTML = s.list.length ? s.list.map(q => `
+    <button class="qitem ${q.i === s.qIndex ? 'active' : ''}" onclick="send('load',{index:${q.i}})">
+      <span>${q.i + 1}. ${esc(q.text)}</span>
+      <small>${esc(q.answer)}${q.media ? ' · ' + q.media : ''}</small>
+    </button>`).join('')
+    : `<div class="muted">${s.round === 'idle' ? 'Chọn một phần thi ở thanh trên để bắt đầu.' : s.round === 'vedich' ? 'Chọn đội và gói điểm ở khung bên dưới.' : 'Không có câu hỏi.'}</div>`;
+
+  // Câu hiện tại
+  const key = s.q ? `${s.round}|${s.qIndex}` : '';
+  if (key !== mediaKey) {
+    mediaKey = key;
+    $('#cur').innerHTML = s.q ? `
+      <h2>${esc(s.roundName)}${s.qIndex >= 0 ? ' · Câu ' + (s.qIndex + 1) : ''}${s.q.points ? ' · ' + s.q.points + ' điểm' : ''}</h2>
+      <div class="text">${esc(s.q.text)}</div>
+      ${mediaHTML(s.q.media, { controls: true, muted: true })}
+      <div class="answer">Đáp án: ${esc(s.q.answer)}</div>
+      <div class="muted" id="curState"></div>`
+      : `<h2>${esc(s.roundName)}</h2><div class="muted">Chưa chọn câu hỏi.</div>`;
+  }
+  const cs = $('#curState');
+  if (cs) cs.textContent = s.transitioning ? 'LED đang chạy chuyển cảnh… câu hỏi sẽ hiện và đồng hồ chạy khi xong' : [
+    s.showQuestion ? 'LED đang hiện câu hỏi' : 'LED chưa hiện câu hỏi',
+    s.accepting ? 'đang nhận đáp án' : '',
+    s.showAnswer ? 'đã hiện đáp án' : ''
+  ].filter(Boolean).join(', ');
+
+  // Chuông
+  const bs = $('#buzzState');
+  bs.className = 'buzzState' + (s.buzzer.winner ? ' win' : '');
+  bs.textContent = s.buzzer.winner ? `🔔 ${tname(s.buzzer.winner)} giành quyền`
+    : s.buzzer.open ? `Chuông đang mở (${{ answer: 'trả lời', steal: 'cướp điểm', keyword: 'từ khóa' }[s.buzzer.purpose]})`
+    : 'Chuông đang đóng';
+
+  renderRoundPanel(s);
+  renderTeams(s);
+  renderRoundPanelHook();
+  renderSoundBoard(s);
+  $('#notice').textContent = s.notice || '';
+  $('#notice').classList.toggle('hidden', !s.notice);
+  $('#log').innerHTML = (s.history || []).map(h =>
+    `<div>${h.t.slice(11, 19)} ${esc(h.type)} ${h.teamId ? esc(tname(h.teamId)) : ''} ${h.delta != null ? (h.delta > 0 ? '+' : '') + h.delta : ''} ${esc(h.reason || h.text || h.round || '')}</div>`).join('');
+}
+
+/* Bảng âm thanh: nhóm theo số đầu tên file (1 Khởi động, 2 VCNV, 3 Tăng tốc, 4 Về đích) */
+let sndAll = false, sndKey = '';
+const SND_GROUP = { kdrieng: '1', khoidong: '1', phu: '1', vcnv: '2', tangtoc: '3', vedich: '4' };
+const SND_NAME = { '1': 'Khởi động', '2': 'Vượt chướng ngại vật', '3': 'Tăng tốc', '4': 'Về đích', '': 'Chung' };
+$('#sndAll').onclick = () => { sndAll = !sndAll; sndKey = ''; renderSoundBoard(S); };
+function renderSoundBoard(s) {
+  $('#btnProgIntro').classList.toggle('hidden', !s.hasProgramIntro);
+  const files = s.sounds || [];
+  const cur = SND_GROUP[s.round] || '';
+  const key = [files.length, cur, sndAll].join('|');
+  if (key === sndKey) return;
+  sndKey = key;
+  $('#sndAll').textContent = sndAll ? 'Chỉ phần thi hiện tại' : 'Hiện tất cả';
+  const groups = {};
+  files.forEach(f => { const g = (/^(\d)/.exec(f) || [, ''])[1]; (groups[g] = groups[g] || []).push(f); });
+  const show = sndAll ? Object.keys(groups).sort((a, b) => (a || '9').localeCompare(b || '9')) : [cur, ''].filter((g, i, a) => groups[g] && a.indexOf(g) === i);
+  $('#sndBoard').innerHTML = show.length ? show.map(g => `<div class="grp">${SND_NAME[g] || 'Khác'}</div>` +
+    groups[g].map(f => `<button data-snd="${esc(f)}" title="${esc(f)}">🔊 ${esc(f.replace(/\.[^.]+$/, ''))}</button>`).join('')).join('')
+    : '<div class="muted">Chưa có file âm thanh trong media/sound.</div>';
+}
+$('#sndBoard').addEventListener('click', e => {
+  const b = e.target.closest('[data-snd]');
+  if (b) send('playSound', { file: b.dataset.snd });
+});
+
+function renderRoundPanelHook() { if (!$('#bankView').classList.contains('hidden')) renderBank(); }
+function renderRoundPanel(s) {
+  const p = $('#roundPanel');
+  if (s.round === 'vcnv' && s.vcnv) {
+    p.innerHTML = `<h2>Ô chữ và hình ảnh</h2>
+      <div class="rowsTable">${s.vcnv.rows.map((r, i) => `
+        <div class="r"><span>${i + 1}</span>${boxesHTML(r.pattern, r.answer, r.status)}
+        <span class="row"><button class="ok" onclick="send('revealRow',{row:${i}})" title="Mở hàng ngang và ô hình">Mở</button>
+        <button class="ghost" onclick="send('failRow',{row:${i}})" title="Không đội nào đúng">✕</button></span></div>`).join('')}</div>
+      <div class="row"><button ${s.vcnv.tiles.every(Boolean) ? 'disabled' : ''} onclick="send('revealPicture')">🖼 Lật hình</button>
+        <span class="muted">Ô góc tự lật khi mở hàng ngang tương ứng. Ô trung tâm chỉ mở khi từ khóa được công bố đủ.</span></div>
+      <div class="row">Hiệu ứng lật:
+        <select onchange="send('setEffect',{effect:this.value})">
+          ${['flip', 'fade', 'zoom', 'slide'].map(f => `<option ${s.effect === f ? 'selected' : ''} value="${f}">${{ flip: 'Lật 3D', fade: 'Mờ dần', zoom: 'Thu nhỏ', slide: 'Trượt' }[f]}</option>`).join('')}
+        </select></div>
+      <div>Từ khóa — bấm từng chữ để mở trên LED (bấm lại để đóng):</div>
+      <div class="kwpick">${(() => { let n = 0; return (s.vcnv.keywordPattern || []).map(len => Array.from({ length: len }, () => {
+        const i = n++, on = s.vcnv.keywordSolved || (s.vcnv.kwOpen || []).includes(i);
+        return `<button class="${on ? 'gold' : ''}" ${s.vcnv.keywordSolved ? 'disabled' : ''} onclick="send('revealKwLetter',{i:${i}})">${esc(s.vcnv.kwLetters[i])}</button>`;
+      }).join('')).join('<span class="gap"></span>'); })()}</div>
+      <div class="row"><button class="gold" onclick="send('openBuzzer',{purpose:'keyword'})">Mở chuông từ khóa</button>
+        <button ${s.vcnv.keywordSolved ? 'disabled' : ''} onclick="send('revealKeyword')">Công bố cả từ khóa</button></div>`;
+  } else if (s.round === 'tangtoc') {
+    p.innerHTML = `<h2>Tăng tốc</h2>
+      <div class="muted">Chấm Đúng/Sai cho từng đội, sau đó xếp hạng theo thời gian gửi đáp án: ${[40, 30, 20, 10].join(' / ')} điểm.</div>
+      <button class="gold" ${s.tangtocScored ? 'disabled' : ''} onclick="send('scoreTangtoc')">${s.tangtocScored ? 'Đã cộng điểm câu này' : 'Cộng điểm theo thứ tự'}</button>`;
+  } else if (s.round === 'vedich' && s.vedich) {
+    const vd = s.vedich, cur = s.teams.find(t => t.id === vd.current);
+    p.innerHTML = `<h2>Về đích</h2>
+      <div class="muted">Chọn đội đang thi ở khung vàng trên cùng cột Các đội.</div>
+      <div class="row"><button class="${vd.screen === 'choose' ? 'gold' : ''}" onclick="send('vdChooseScreen')">${vd.screen === 'choose' ? 'Ẩn màn hình chọn gói' : '📺 Màn hình chọn gói'}</button></div>
+      <div class="muted">Gói của ${esc(cur?.name)} — bấm là ra câu hỏi đầu tiên:</div>
+      <div class="pkgs">${(s.packages || []).map(pk => `<button class="${vd.pkg?.value === pk.value ? 'gold' : ''}" onclick="send('vdPackage',{value:${pk.value}})">
+        <b>${pk.value}</b><small>${pk.plan.join(' + ')}</small></button>`).join('')}</div>
+      ${vd.pkg ? `<div class="row"><span>Gói ${vd.pkg.value}: câu ${vd.pkg.pos + 1}/${vd.pkg.len} (${vd.pkg.values[vd.pkg.pos]} điểm)</span>
+        <button class="gold" ${vd.pkg.pos >= vd.pkg.len - 1 ? 'disabled' : ''} onclick="send('vdNext')">Câu tiếp theo ▶</button></div>` : ''}
+      <details><summary>Câu lẻ ngoài gói (còn trong ngân hàng: ${[10, 20, 30].map(v => `${v}đ: ${s.vedichPool[v] || 0}`).join(', ')})</summary>
+        <div class="row" style="margin-top:6px">${[10, 20, 30].map(v => `<button onclick="send('vdValue',{value:${v}})" ${s.vedichPool[v] ? '' : 'disabled'}>${v} điểm</button>`).join('')}</div></details>
+      <div class="row">
+        <button class="${vd.star ? 'gold' : ''}" ${!s.q || cur?.starUsed ? 'disabled' : ''} onclick="send('vdStar')">⭐ ${cur?.starUsed ? 'Đã dùng ngôi sao' : vd.star ? 'Đang dùng ngôi sao' : 'Ngôi sao hy vọng'}</button>
+        <button class="bad" ${!s.q ? 'disabled' : ''} onclick="send('vdSteal')">🔔 Mở cướp điểm</button>
+      </div>
+      <div class="muted">Đúng: +điểm câu (×2 nếu dùng ngôi sao). Sai khi dùng ngôi sao: −điểm câu. Cướp đúng: nhận điểm câu, đội đang thi bị trừ tương ứng.</div>`;
+  } else if (s.round === 'kdrieng' && s.kdrieng) {
+    p.innerHTML = `<h2>Khởi động – Lượt riêng</h2>
+      <div class="muted">Chọn đội ở khung vàng trên cùng cột Các đội. Mỗi đội trả lời bộ câu hỏi riêng, không bấm chuông; 10 giây/câu; đúng +10, sai hoặc bỏ qua 0 điểm.
+      Nhạc nền chạy trong lúc đồng hồ chạy và tạm dừng giữa các câu; chấm xong câu cuối thì phát "hoàn thành".</div>`;
+  } else if (s.round === 'khoidong' || s.round === 'phu') {
+    p.innerHTML = `<h2>${esc(s.roundName)}</h2><div class="muted">Bắt đầu sẽ mở chuông. Đội giành quyền có 5 giây trả lời. Đúng +10, sai −5 (đội sai bị khóa chuông, có thể mở chuông lại cho các đội còn lại).</div>`;
+  } else p.innerHTML = '';
+}
+
+function renderTeams(s) {
+  const kd = s.round === 'kdrieng' && s.kdrieng;
+  const vd = s.round === 'vedich' && s.vedich;
+  const curId = kd ? s.kdrieng.current : vd ? s.vedich.current : null;
+  $('#teamPick').innerHTML = kd ? `<b>Lượt riêng – chọn đội đang thi</b>
+    <div class="row">${s.teams.map(t => `<button class="${t.id === curId ? 'gold' : ''}" onclick="send('kdTeam',{teamId:${t.id}})">${esc(t.name)}</button>`).join('')}</div>`
+    : vd ? `<b>Về đích – chọn đội đang thi</b> <span class="muted">(thứ tự điểm thấp thi trước)</span>
+    <div class="row">${s.vedich.order.map((id, i) => `<button class="${id === curId ? 'gold' : ''}" onclick="send('vdCurrent',{teamId:${id}})">${i + 1}. ${esc(tname(id))}</button>`).join('')}</div>` : '';
+  // Đội đang thi lên đầu. Lượt riêng: các đội khác mờ đi. Về đích: các đội khác vẫn chấm được (cướp điểm)
+  const list = curId ? [...s.teams].sort((a, b) => (b.id === curId) - (a.id === curId)) : s.teams;
+  $('#teams').innerHTML = list.map(t => {
+    const a = s.answers?.[t.id];
+    const elim = s.vcnv?.eliminated.includes(t.id);
+    const cls = [s.buzzer.winner === t.id ? 'win' : '',
+      (s.round === 'vedich' && s.vedich?.current === t.id) || (kd && s.kdrieng.current === t.id) ? 'cur' : '',
+      kd && s.kdrieng.current !== t.id ? 'dim' : ''].join(' ');
+    return `<div class="team ${cls}">
+      <div class="hd"><span class="nm"><span class="dot ${t.online ? 'on' : ''}"></span>${esc(t.name)} ${s.round === 'vedich' ? (t.starUsed ? '<span class="muted">⭐ đã dùng</span>' : '⭐') : ''}</span><span class="sc">${t.score}</span></div>
+      <div class="muted">${s.part ? `Phần thi ${esc(s.partName)}: <b style="color:var(--paper)">${t.partScore}</b> · ` : ''}Tổng: <b style="color:var(--paper)">${t.score}</b>${s.showTotal ? ' (đang công bố)' : ' (LED chưa hiện)'}</div>
+      ${a ? `<div class="ans">“${esc(a.text)}” <span class="muted">${(a.ms / 1000).toFixed(2)}s ${a.verdict === true ? '✅' : a.verdict === false ? '❌' : ''} ${a.pts ? '+' + a.pts : ''}</span></div>` : ''}
+      ${elim ? '<div class="muted">Mất quyền trả lời từ khóa</div>' : ''}
+      ${vd && t.id !== curId ? `<div class="muted">Giành quyền trả lời: Đúng +${s.vedich.value || 'điểm câu'} (trừ đội đang thi), Sai trừ một nửa</div>` : ''}
+      <div class="row">
+        <button class="ok" onclick="send('judge',{teamId:${t.id},correct:true})">Đúng</button>
+        <button class="bad" onclick="send('judge',{teamId:${t.id},correct:false})">Sai</button>
+        <span style="flex:1"></span>
+        ${[-10, -5, 5, 10].map(d => `<button class="ghost" onclick="send('adjust',{teamId:${t.id},delta:${d}})">${d > 0 ? '+' : ''}${d}</button>`).join('')}
+      </div>
+      ${s.round === 'vcnv' ? `<button class="ghost" onclick="send('eliminate',{teamId:${t.id}})">${elim ? 'Khôi phục quyền' : 'Loại khỏi phần này'}</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ================================================= NGÂN HÀNG CÂU HỎI */
+const SECTIONS = [
+  { key: 'kdrieng:1', name: 'Lượt riêng – Đội 1', time: 10, points: true, team: 1 },
+  { key: 'kdrieng:2', name: 'Lượt riêng – Đội 2', time: 10, points: true, team: 2 },
+  { key: 'kdrieng:3', name: 'Lượt riêng – Đội 3', time: 10, points: true, team: 3 },
+  { key: 'kdrieng:4', name: 'Lượt riêng – Đội 4', time: 10, points: true, team: 4 },
+  { key: 'khoidong', name: 'Khởi động – Lượt chung', time: 10, points: true },
+  { key: 'vcnv', name: 'Vượt chướng ngại vật', time: 10, fixed: true },
+  { key: 'tangtoc', name: 'Tăng tốc', time: 30 },
+  { key: 'vedich:10', name: 'Về đích 10 điểm', time: 10 },
+  { key: 'vedich:20', name: 'Về đích 20 điểm', time: 15 },
+  { key: 'vedich:30', name: 'Về đích 30 điểm', time: 20 },
+  { key: 'phu', name: 'Câu hỏi phụ', time: 10, points: true }
+];
+const MEDIA_NAME = { image: 'Hình ảnh', video: 'Video', audio: 'Âm thanh' };
+const ACCEPT = { image: '.jpg,.jpeg,.png,.webp,.gif,.svg', video: '.mp4,.webm', audio: '.mp3,.wav,.ogg' };
+let bank = null, media = { image: [], video: [], audio: [] }, sec = 'khoidong', editing = -1;
+
+socket.on('bank', b => { bank = b; renderBank(); });
+
+const secInfo = () => SECTIONS.find(x => x.key === sec);
+function secArr(key = sec) {
+  if (!bank) return [];
+  if (key === 'vcnv') return bank.vcnv?.rows || [];
+  const [a, v] = key.split(':');
+  if (a === 'kdrieng') return bank.kdrieng?.[v] || [];
+  return (v ? bank.vedich?.[v] : bank[a]) || [];
+}
+const bankOp = (op, extra = {}) => new Promise(res => socket.emit('bank', { op, section: sec, ...extra }, res));
+function flash(text, ok = true) {
+  const m = $('#bankMsg');
+  m.textContent = text; m.className = 'msg ' + (ok ? 'ok' : 'err');
+  clearTimeout(flash.t); flash.t = setTimeout(() => { m.textContent = ''; }, 4000);
+}
+
+$('#viewToggle').onclick = () => {
+  const toBank = $('#bankView').classList.contains('hidden');
+  $('#bankView').classList.toggle('hidden', !toBank);
+  $('#controlView').classList.toggle('hidden', toBank);
+  $('#viewToggle').classList.toggle('on', toBank);
+  $('#viewToggle').textContent = toBank ? 'Về màn hình điều khiển' : 'Ngân hàng câu hỏi';
+  if (toBank) { loadMedia(); if (editing < 0 && !secInfo().fixed) newQuestion(); }
+};
+
+async function loadMedia() {
+  try {
+    const r = await fetch('/api/media', { headers: { 'x-admin-password': sessionStorage.getItem('olan-admin') || '' } });
+    if (r.ok) media = await r.json();
+  } catch {}
+  fillMediaSelect(); fillKwImage();
+}
+async function uploadFile(file, type) {
+  const r = await fetch(`/api/media/${type}?name=${encodeURIComponent(file.name)}`, {
+    method: 'POST',
+    headers: { 'x-admin-password': sessionStorage.getItem('olan-admin') || '', 'Content-Type': 'application/octet-stream' },
+    body: file
+  });
+  const j = await r.json().catch(() => ({ error: 'Tải lên thất bại.' }));
+  if (!r.ok) throw new Error(j.error || 'Tải lên thất bại.');
+  await loadMedia();
+  return j.src;
+}
+const previewHTML = (type, src) => !src ? '' :
+  type === 'image' ? `<img src="${esc(src)}" alt="">` :
+  type === 'video' ? `<video src="${esc(src)}" controls muted></video>` :
+  `<audio src="${esc(src)}" controls></audio>`;
+
+function renderBank() {
+  if (!bank) return;
+  const label = x => x.team && S ? `Lượt riêng – ${S.teams.find(t => t.id === x.team)?.name || 'Đội ' + x.team}` : x.name;
+  $('#sections').innerHTML = SECTIONS.map(x =>
+    `<button class="${x.key === sec ? 'active' : ''}" data-sec="${x.key}"><span>${esc(label(x))}</span><span>${secArr(x.key).length}</span></button>`).join('');
+  const info = secInfo(), arr = secArr();
+  $('#bankTitle').textContent = `${label(info)} (${arr.length} câu)`;
+  $('#bankNew').classList.toggle('hidden', !!info.fixed);
+  $('#vcnvForm').classList.toggle('hidden', !info.fixed);
+  if (info.fixed && document.activeElement?.id !== 'kwInput') {
+    $('#kwInput').value = bank.vcnv?.keyword || '';
+    fillKwImage();
+  }
+  const liveIdx = S && (S.round === sec || (S.round === 'kdrieng' && sec === 'kdrieng:' + S.kdrieng?.current)) ? S.qIndex : -1;
+  $('#bankList').innerHTML = arr.length ? arr.map((q, i) => `
+    <div class="bitem ${editing === i ? 'sel' : ''}">
+      <div class="bt"><b>${i + 1}.</b> ${esc(q.text)}
+        <div class="meta"><span class="a">${esc(q.answer)}</span><span>${q.time} giây</span>
+          ${q.points ? `<span>${q.points} điểm</span>` : ''}
+          ${q.media ? `<span>${MEDIA_NAME[q.media.type] || ''}: ${esc(q.media.src.split('/').pop())}</span>` : ''}
+          ${liveIdx === i ? '<span class="live">Đang chọn trên sân khấu</span>' : ''}</div>
+      </div>
+      <div class="row">
+        <button data-ed="${i}">Sửa</button>
+        ${info.fixed ? '' : `
+        <button class="ghost" data-mv="${i}" data-dir="-1" ${i === 0 ? 'disabled' : ''} title="Lên">↑</button>
+        <button class="ghost" data-mv="${i}" data-dir="1" ${i === arr.length - 1 ? 'disabled' : ''} title="Xuống">↓</button>
+        <button class="bad" data-del="${i}">Xóa</button>`}
+      </div>
+    </div>`).join('')
+    : '<div class="muted">Phần này chưa có câu hỏi. Bấm Thêm câu hỏi để tạo câu đầu tiên.</div>';
+  $('#edTitle').textContent = editing >= 0 ? `Sửa câu ${editing + 1} — ${info.name}` : `Thêm câu hỏi — ${info.name}`;
+}
+
+$('#sections').addEventListener('click', e => {
+  const b = e.target.closest('[data-sec]'); if (!b) return;
+  sec = b.dataset.sec; editing = -1;
+  if (secInfo().fixed) editQuestion(0); else newQuestion();
+  renderBank();
+});
+$('#bankList').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ed) { editQuestion(Number(b.dataset.ed)); renderBank(); }
+  if (b.dataset.mv) {
+    const i = Number(b.dataset.mv), dir = Number(b.dataset.dir);
+    const r = await bankOp('move', { index: i, dir });
+    if (!r.ok) return flash(r.error, false);
+    if (editing === i) editing = i + dir; else if (editing === i + dir) editing = i;
+    renderBank();
+  }
+  if (b.dataset.del) {
+    const i = Number(b.dataset.del), q = secArr()[i];
+    if (!confirm(`Xóa câu ${i + 1}?\n\n${q.text}`)) return;
+    const r = await bankOp('delete', { index: i });
+    if (!r.ok) return flash(r.error, false);
+    flash('Đã xóa câu hỏi.');
+    if (editing === i) newQuestion(); else if (editing > i) editing--;
+    renderBank();
+  }
+});
+$('#bankNew').onclick = () => { newQuestion(); renderBank(); $('#fText').focus(); };
+$('#fCancel').onclick = () => { if (secInfo().fixed) editQuestion(editing); else newQuestion(); renderBank(); };
+
+function newQuestion() {
+  const info = secInfo();
+  editing = -1;
+  fillForm({ text: '', answer: '', time: info.time, points: 10 });
+  $('#fSave').textContent = 'Thêm câu hỏi';
+}
+function editQuestion(i) {
+  const q = secArr()[i]; if (!q) return newQuestion();
+  editing = i;
+  fillForm(q);
+  $('#fSave').textContent = 'Lưu thay đổi';
+}
+function fillForm(q) {
+  const info = secInfo();
+  $('#fText').value = q.text || '';
+  $('#fAnswer').value = q.answer || '';
+  $('#fTime').value = q.time || info.time;
+  $('#fPointsWrap').classList.toggle('hidden', !info.points);
+  $('#fPoints').value = q.points || 10;
+  $('#fMediaType').value = q.media?.type || '';
+  fillMediaSelect(q.media?.src);
+  $('#fErr').textContent = '';
+  answerPreview();
+}
+function answerPreview() {
+  if (sec !== 'vcnv') { $('#fAnswerPreview').innerHTML = ''; return; }
+  const a = $('#fAnswer').value.normalize('NFC').trim().toUpperCase();
+  const pat = a ? a.split(/\s+/).map(w => [...w].length) : [];
+  $('#fAnswerPreview').innerHTML = pat.length ? `<div class="muted">Ô chữ trên LED (${pat.reduce((x, y) => x + y, 0)} chữ cái):</div>${boxesHTML(pat, a, 'open')}` : '';
+}
+$('#fAnswer').addEventListener('input', answerPreview);
+
+function fillMediaSelect(keep) {
+  const type = $('#fMediaType').value, sel = $('#fMediaSrc');
+  $('#fMediaPick').classList.toggle('hidden', !type);
+  if (!type) { $('#fPreview').innerHTML = ''; return; }
+  const cur = keep !== undefined ? keep : sel.value;
+  const list = [...(media[type] || [])];
+  if (cur && !list.includes(cur)) list.unshift(cur);
+  sel.innerHTML = `<option value="">Chọn file có sẵn…</option>` + list.map(src => `<option value="${esc(src)}">${esc(src.split('/').pop())}</option>`).join('');
+  sel.value = cur || '';
+  $('#fUpload').accept = ACCEPT[type];
+  $('#fPreview').innerHTML = previewHTML(type, sel.value);
+}
+$('#fMediaType').onchange = () => fillMediaSelect('');
+$('#fMediaSrc').onchange = () => { $('#fPreview').innerHTML = previewHTML($('#fMediaType').value, $('#fMediaSrc').value); };
+$('#fUpload').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = '';
+  if (!file) return;
+  const type = $('#fMediaType').value;
+  $('#fErr').textContent = `Đang tải lên ${file.name}…`;
+  try { const src = await uploadFile(file, type); fillMediaSelect(src); $('#fErr').textContent = ''; }
+  catch (err) { $('#fErr').textContent = err.message; }
+};
+
+$('#qForm').onsubmit = async e => {
+  e.preventDefault();
+  const type = $('#fMediaType').value, src = $('#fMediaSrc').value;
+  if (type && !src) { $('#fErr').textContent = 'Chọn hoặc tải lên file media, hoặc đặt Media đi kèm là Không có.'; return; }
+  const data = {
+    text: $('#fText').value, answer: $('#fAnswer').value,
+    time: Number($('#fTime').value), points: Number($('#fPoints').value),
+    media: type ? { type, src } : null
+  };
+  const isNew = editing < 0;
+  const r = await bankOp(isNew ? 'add' : 'update', { index: editing, data });
+  if (!r.ok) { $('#fErr').textContent = r.error; return; }
+  if (isNew) { flash('Đã thêm câu hỏi.'); newQuestion(); $('#fText').focus(); }
+  else flash(`Đã lưu câu ${editing + 1}.`);
+  renderBank();
+};
+
+/* Từ khóa + hình VCNV */
+function fillKwImage() {
+  const sel = $('#kwImage'); if (!sel || !bank) return;
+  const cur = bank.vcnv?.image || '';
+  const list = [...(media.image || [])];
+  if (cur && !list.includes(cur)) list.unshift(cur);
+  const keep = sel.dataset.touched ? sel.value : cur;
+  sel.innerHTML = list.map(src => `<option value="${esc(src)}">${esc(src.split('/').pop())}</option>`).join('');
+  sel.value = keep;
+  $('#kwPreview').innerHTML = previewHTML('image', sel.value);
+}
+$('#kwImage').onchange = () => { $('#kwImage').dataset.touched = '1'; $('#kwPreview').innerHTML = previewHTML('image', $('#kwImage').value); };
+$('#kwUpload').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = '';
+  if (!file) return;
+  try {
+    const src = await uploadFile(file, 'image');
+    $('#kwImage').dataset.touched = '1'; fillKwImage(); $('#kwImage').value = src;
+    $('#kwPreview').innerHTML = previewHTML('image', src);
+    flash('Đã tải hình lên. Bấm Lưu từ khóa và hình để áp dụng.');
+  } catch (err) { flash(err.message, false); }
+};
+$('#vcnvForm').onsubmit = async e => {
+  e.preventDefault();
+  const r = await bankOp('vcnvMeta', { keyword: $('#kwInput').value, image: $('#kwImage').value });
+  if (!r.ok) return flash(r.error, false);
+  delete $('#kwImage').dataset.touched;
+  flash('Đã lưu từ khóa và hình.');
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OLYMPIA APP – O LAN</title>
+<link rel="stylesheet" href="/static/common.css">
+<style>
+  main { max-width: 720px; margin: 0 auto; padding: 48px 20px; display: grid; gap: 28px; }
+  .hero { display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: center; }
+  .hero img { width: 200px; height: 200px; object-fit: contain; }
+  h1 { margin: 0; font-size: 1.9rem; line-height: 1.2; text-transform: uppercase; }
+  .slogan { margin: 8px 0; color: var(--gold); font-weight: 700; font-size: 1.2rem; text-transform: uppercase; }
+  @media (max-width: 560px) { .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .links a { display: block; padding: 18px; border-radius: var(--r-lg); background: var(--stage); color: var(--paper); text-decoration: none; font-size: 1.15rem; }
+  .links a:hover { background: var(--lane); }
+  .links a.led { background: var(--gold); color: var(--ink); font-weight: 700; }
+  code { color: var(--gold); }
+  p { color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <img data-brand="logo" src="/media/images/logo.png" alt="Logo cuộc thi">
+    <div>
+      <h1 data-brand="name">Cuộc thi Viện kiểm sát nhân dân khu vực 5 - Đà Nẵng</h1>
+      <p class="slogan" data-brand="slogan">Giỏi nghiệp vụ - Tinh thông công nghệ</p>
+      <p>Phần mềm thi đấu OLYMPIA APP – O LAN, chạy trong mạng LAN</p>
+    </div>
+  </div>
+  <div class="links" id="links">
+    <a href="/admin">Điều khiển</a>
+    <a class="led" href="/led">Màn hình LED</a>
+  </div>
+  <p id="addr"></p>
+</main>
+<script src="/static/common.js"></script>
+<script>
+brandReady.then(info => {
+  if (!info) return;
+  const links = document.getElementById('links');
+  info.teams.forEach(t => links.insertAdjacentHTML('beforeend', `<a href="/team/${t.id}">${t.name}</a>`));
+  document.getElementById('addr').innerHTML = info.ips.length
+    ? 'Máy khác trong mạng LAN mở: ' + info.ips.map(ip => `<code>http://${ip}:${info.port}</code>`).join(' hoặc ')
+    : 'Không tìm thấy địa chỉ LAN. Kiểm tra kết nối mạng của máy chủ.';
+});
+</script>
+</body>
+</html>

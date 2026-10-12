@@ -1,0 +1,15 @@
+{
+  "name": "olympia-o-lan",
+  "version": "0.1.0",
+  "description": "OLYMPIA APP – O LAN: hệ thống thi đấu kiến thức qua mạng LAN",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

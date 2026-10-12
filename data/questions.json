@@ -1,0 +1,372 @@
+{
+  "kdrieng": {
+    "1": [
+      {
+        "text": "Cơ quan nào thực hành quyền công tố và kiểm sát hoạt động tư pháp ở nước ta?",
+        "answer": "Viện kiểm sát nhân dân",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Ngày truyền thống ngành Kiểm sát nhân dân là ngày nào?",
+        "answer": "26/7",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "AI là viết tắt của cụm từ tiếng Anh nào?",
+        "answer": "Artificial Intelligence",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Đơn vị đo dung lượng lưu trữ nào lớn hơn: MB hay GB?",
+        "answer": "GB",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Thành phố Đà Nẵng nằm bên bờ biển nào?",
+        "answer": "Biển Đông",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Một tuần có bao nhiêu giờ?",
+        "answer": "168",
+        "time": 10,
+        "points": 10
+      }
+    ],
+    "2": [
+      {
+        "text": "Viện kiểm sát nhân dân được thành lập vào năm nào?",
+        "answer": "1960",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Câu lệnh giao việc cho công cụ AI thường được gọi là gì?",
+        "answer": "Prompt (câu lệnh)",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Hiện tượng AI tạo ra thông tin sai nhưng trình bày như thật gọi là gì?",
+        "answer": "Ảo giác AI",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Phần mềm diệt virus bảo vệ máy tính khỏi loại mối đe dọa nào?",
+        "answer": "Mã độc",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Cây cầu nào ở Đà Nẵng có khả năng phun lửa, phun nước?",
+        "answer": "Cầu Rồng",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Số La Mã X bằng bao nhiêu?",
+        "answer": "10",
+        "time": 10,
+        "points": 10
+      }
+    ],
+    "3": [
+      {
+        "text": "Người đứng đầu Viện kiểm sát nhân dân tối cao có chức danh là gì?",
+        "answer": "Viện trưởng",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Chữ ký số dùng để xác thực điều gì trên văn bản điện tử?",
+        "answer": "Người ký và tính toàn vẹn của văn bản",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Thư điện tử giả mạo nhằm đánh cắp mật khẩu gọi là hình thức tấn công gì?",
+        "answer": "Lừa đảo (phishing)",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Mật khẩu mạnh nên kết hợp những loại ký tự nào?",
+        "answer": "Chữ hoa, chữ thường, số và ký tự đặc biệt",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Bán đảo nào ở Đà Nẵng có chùa Linh Ứng?",
+        "answer": "Sơn Trà",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Nước đóng băng ở bao nhiêu độ C?",
+        "answer": "0",
+        "time": 10,
+        "points": 10
+      }
+    ],
+    "4": [
+      {
+        "text": "Trong Word, phím tắt Ctrl + Z dùng để làm gì?",
+        "answer": "Hoàn tác thao tác vừa làm",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Viết tắt “CĐS” trong các văn bản của Ngành có nghĩa là gì?",
+        "answer": "Chuyển đổi số",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Trước khi đưa tài liệu vào công cụ AI, cần làm gì với thông tin cá nhân?",
+        "answer": "Ẩn danh / làm sạch dữ liệu",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Mạng nội bộ kết nối các máy tính trong cơ quan được gọi tắt là gì?",
+        "answer": "LAN",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Sông nào chảy qua trung tâm thành phố Đà Nẵng?",
+        "answer": "Sông Hàn",
+        "time": 10,
+        "points": 10
+      },
+      {
+        "text": "Một năm có bao nhiêu quý?",
+        "answer": "4",
+        "time": 10,
+        "points": 10
+      }
+    ]
+  },
+  "khoidong": [
+    {
+      "text": "Con sông nào chảy qua trung tâm thành phố Đà Nẵng?",
+      "answer": "Sông Hàn",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Nguyên tố hóa học nào có ký hiệu là Fe?",
+      "answer": "Sắt",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Thủ đô của Nhật Bản là thành phố nào?",
+      "answer": "Tokyo",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Trong hệ Mặt Trời, hành tinh nào lớn nhất?",
+      "answer": "Sao Mộc",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Tác giả của “Truyện Kiều” là ai?",
+      "answer": "Nguyễn Du",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Một năm nhuận có bao nhiêu ngày?",
+      "answer": "366",
+      "time": 10,
+      "points": 10
+    }
+  ],
+  "vcnv": {
+    "image": "/media/images/hinh.jpg",
+    "keyword": "HOÀNG THỊ KIM THÀNH",
+    "rows": [
+      {
+        "text": "Người đứng đầu Viện kiểm sát nhân dân các cấp, chịu trách nhiệm lãnh đạo, chỉ đạo và điều hành hoạt động của đơn vị, có chức danh gì?",
+        "answer": "VIỆN TRƯỞNG",
+        "time": 10
+      },
+      {
+        "text": "Sau khi đất nước thống nhất năm 1975, tỉnh Quảng Nam và tỉnh Quảng Đà được hợp nhất thành tỉnh nào?",
+        "answer": "QUẢNG NAM ĐÀ NẴNG",
+        "time": 10
+      },
+      {
+        "text": "Trường hợp người khởi kiện nộp đơn khởi kiện cùng một vụ án hành chính tại nhiều Tòa án nhân dân khu vực có thẩm quyền khác nhau, thì Tòa án nào được ưu tiên xác định thẩm quyền giải quyết theo thứ tự thời gian thụ lý?",
+        "answer": "ĐẦU TIÊN",
+        "time": 10
+      },
+      {
+        "text": "Theo khoản 2 Điều 26 Hiến pháp năm 2013, Nhà nước, xã hội và gia đình có trách nhiệm tạo điều kiện để đối tượng nào phát triển toàn diện, phát huy vai trò của mình trong xã hội",
+        "answer": "PHỤ NỮ",
+        "time": 10
+      }
+    ]
+  },
+  "tangtoc": [
+    {
+      "text": "Lúc 3 giờ đúng, kim giờ và kim phút tạo thành góc bao nhiêu độ?",
+      "answer": "90 độ",
+      "time": 30,
+      "media": {
+        "type": "image",
+        "src": "/media/images/clock-3h.svg"
+      }
+    },
+    {
+      "text": "Nghe đoạn âm thanh: nốt La chuẩn (A4) có tần số bao nhiêu Hz?",
+      "answer": "440 Hz",
+      "time": 30,
+      "media": {
+        "type": "audio",
+        "src": "/media/audio/a440.wav"
+      }
+    },
+    {
+      "text": "Điền số tiếp theo: 2, 6, 12, 20, 30, ?",
+      "answer": "42",
+      "time": 30
+    },
+    {
+      "text": "Một hình lập phương có bao nhiêu cạnh?",
+      "answer": "12",
+      "time": 30
+    }
+  ],
+  "vedich": {
+    "10": [
+      {
+        "text": "Nước sôi ở bao nhiêu độ C trong điều kiện áp suất tiêu chuẩn?",
+        "answer": "100°C",
+        "time": 10
+      },
+      {
+        "text": "Đại dương lớn nhất thế giới?",
+        "answer": "Thái Bình Dương",
+        "time": 10
+      },
+      {
+        "text": "Số nguyên tố chẵn duy nhất?",
+        "answer": "2",
+        "time": 10
+      },
+      {
+        "text": "Viết tắt “VKSND” là của cơ quan nào?",
+        "answer": "Viện kiểm sát nhân dân",
+        "time": 10
+      },
+      {
+        "text": "Phím tắt Ctrl + C trên máy tính dùng để làm gì?",
+        "answer": "Sao chép",
+        "time": 10
+      },
+      {
+        "text": "Một byte gồm bao nhiêu bit?",
+        "answer": "8",
+        "time": 10
+      },
+      {
+        "text": "Thủ đô của nước Cộng hòa xã hội chủ nghĩa Việt Nam là thành phố nào?",
+        "answer": "Hà Nội",
+        "time": 10
+      },
+      {
+        "text": "Đuôi tệp “.pdf” thường dùng cho loại tài liệu nào?",
+        "answer": "Tài liệu định dạng PDF (văn bản để xem, in)",
+        "time": 10
+      }
+    ],
+    "20": [
+      {
+        "text": "Khí nào chiếm tỉ lệ lớn nhất trong không khí?",
+        "answer": "Nitơ",
+        "time": 15
+      },
+      {
+        "text": "Tổng các góc trong của một ngũ giác là bao nhiêu độ?",
+        "answer": "540 độ",
+        "time": 15
+      },
+      {
+        "text": "Ai là tác giả “Bình Ngô đại cáo”?",
+        "answer": "Nguyễn Trãi",
+        "time": 15
+      },
+      {
+        "text": "Thư điện tử giả mạo nhằm lừa người nhận cung cấp mật khẩu được gọi là hình thức tấn công gì?",
+        "answer": "Lừa đảo trực tuyến (phishing)",
+        "time": 15
+      }
+    ],
+    "30": [
+      {
+        "text": "Tốc độ ánh sáng trong chân không xấp xỉ bao nhiêu km/s?",
+        "answer": "300.000 km/s",
+        "time": 20
+      },
+      {
+        "text": "Văn bản có hiệu lực pháp lý cao nhất của Việt Nam?",
+        "answer": "Hiến pháp",
+        "time": 20
+      },
+      {
+        "text": "log₂(1024) bằng bao nhiêu?",
+        "answer": "10",
+        "time": 20
+      },
+      {
+        "text": "Hệ nhị phân dùng những chữ số nào?",
+        "answer": "0 và 1",
+        "time": 20
+      },
+      {
+        "text": "Trong ba nhánh quyền lực nhà nước, Viện kiểm sát nhân dân gắn với hoạt động của nhánh quyền nào?",
+        "answer": "Quyền tư pháp",
+        "time": 20
+      },
+      {
+        "text": "Giao thức “https” khác “http” ở điểm nào?",
+        "answer": "Dữ liệu được mã hóa (bảo mật)",
+        "time": 20
+      },
+      {
+        "text": "Đơn vị nào lớn hơn: Terabyte hay Gigabyte?",
+        "answer": "Terabyte",
+        "time": 20
+      },
+      {
+        "text": "Cơ quan nào là cơ quan quyền lực nhà nước cao nhất của nước Cộng hòa xã hội chủ nghĩa Việt Nam?",
+        "answer": "Quốc hội",
+        "time": 20
+      }
+    ]
+  },
+  "phu": [
+    {
+      "text": "Câu phụ 1: 15 × 15 bằng bao nhiêu?",
+      "answer": "225",
+      "time": 10,
+      "points": 10
+    },
+    {
+      "text": "Câu phụ 2: Số cạnh của một hình bát giác?",
+      "answer": "8",
+      "time": 10,
+      "points": 10
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>O LAN · Đội thi</title>
+<link rel="stylesheet" href="/static/common.css">
+<style>
+  #app { min-height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 16px; padding: 16px; max-width: 900px; margin: 0 auto; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .top h1 { margin: 0; font-size: 1.6rem; }
+  .top .who { display: flex; align-items: center; gap: 10px; }
+  .top-logo { width: 52px; height: 52px; object-fit: contain; }
+  .top .score { font-size: 2.6rem; font-weight: 700; color: var(--gold); }
+  .meta { display: flex; justify-content: space-between; color: var(--muted); }
+  .meta .timer { font-size: 2rem; font-weight: 700; color: var(--paper); }
+  .meta .timer.low { color: var(--red); }
+  .q { background: rgba(255,255,255,.05); border-radius: var(--r-lg); padding: 20px; display: grid; gap: 12px; align-content: start; }
+  .q .text { font-size: 1.5rem; line-height: 1.35; }
+  .q .q-media { max-width: 100%; max-height: 38vh; border-radius: var(--r-sm); }
+  .q .status { color: var(--muted); }
+  .answerForm { display: flex; gap: 8px; }
+  .answerForm input { flex: 1; font-size: 1.2rem; min-width: 0; }
+  .answerForm button { white-space: nowrap; }
+  .mine { color: var(--gold); }
+  #buzzBtn {
+    width: 100%; min-height: 28vh; font-size: 3rem; font-weight: 800; border-radius: 24px;
+    background: var(--red); border: 6px solid rgba(255,255,255,.2); color: #fff; touch-action: manipulation;
+  }
+  #buzzBtn:disabled { background: #3b4468; }
+  #buzzBtn.won { background: var(--gold); color: var(--ink); }
+  .hint { text-align: center; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <form id="loginForm">
+    <img class="gate-logo" data-brand="logo" src="/media/images/logo.png" alt="Logo cuộc thi">
+    <p class="gate-name" data-brand="name"></p>
+    <h1 id="gateTitle">Đội thi</h1>
+    <p>Nhập mã PIN do ban tổ chức cấp.</p>
+    <input id="pin" inputmode="numeric" autocomplete="off" placeholder="Mã PIN" required>
+    <button class="gold" type="submit">Vào phòng thi</button>
+    <div class="err" id="err"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <div class="top"><div class="who"><img class="top-logo" data-brand="logoSmall" src="/media/images/logo-256.png" alt=""><h1 id="tName"></h1></div><div style="text-align:right"><div class="score" id="tScore">0</div><div class="hint" id="tScoreLbl"></div></div></div>
+  <div class="meta"><span id="round"></span><span class="timer" id="timer"></span></div>
+  <section class="q" id="q"></section>
+  <div>
+    <button id="buzzBtn" disabled>🔔 CHUÔNG</button>
+    <p class="hint">Có thể bấm phím Space để bấm chuông</p>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/static/common.js"></script>
+<script>
+const teamId = Number(location.pathname.split('/').pop());
+const KEY = 'olan-pin-' + teamId;
+const socket = io();
+let S = null, draft = '', qKey = '';
+
+async function loadName() {
+  try {
+    const info = await (await fetch('/api/info')).json();
+    const t = info.teams.find(x => x.id === teamId);
+    $('#gateTitle').textContent = t ? t.name : 'Không có đội này';
+  } catch {}
+}
+loadName();
+
+function hello(pin) {
+  socket.emit('hello', { role: 'team', teamId, pin }, r => {
+    if (!r.ok) { $('#err').textContent = r.error; sessionStorage.removeItem(KEY); $('#gate').classList.remove('hidden'); $('#app').classList.add('hidden'); return; }
+    sessionStorage.setItem(KEY, pin);
+    $('#gate').classList.add('hidden'); $('#app').classList.remove('hidden');
+  });
+}
+$('#loginForm').onsubmit = e => { e.preventDefault(); Sound.unlock(); hello($('#pin').value.trim()); };
+socket.on('connect', () => { const p = sessionStorage.getItem(KEY); if (p) hello(p); });
+
+function buzz() {
+  if (!$('#buzzBtn').disabled) { socket.emit('buzz'); $('#buzzBtn').disabled = true; }
+}
+$('#buzzBtn').addEventListener('pointerdown', e => { e.preventDefault(); buzz(); });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement?.tagName !== 'INPUT') { e.preventDefault(); buzz(); }
+});
+
+socket.on('state', s => { S = s; render(); });
+socket.on('tick', t => showTimer(t));
+socket.on('buzz', b => { if (b.teamId === teamId) Sound.buzz(); });
+socket.on('judge', j => { if (j.teamId === teamId) j.correct ? Sound.correct() : Sound.wrong(); });
+
+function showTimer(t) {
+  const el = $('#timer'), sec = secs(t.remaining);
+  el.textContent = t.duration ? sec + 's' : '';
+  el.classList.toggle('low', t.running && sec <= 5);
+}
+
+function render() {
+  const s = S, me = s.teams.find(t => t.id === teamId);
+  $('#tName').textContent = me.name;
+  $('#tScore').textContent = s.part ? me.partScore : (me.score ?? '–');
+  $('#tScoreLbl').textContent = s.part ? 'Điểm phần thi ' + s.partName + (me.score != null ? ' · Tổng ' + me.score : '') : (me.score != null ? 'Tổng điểm' : '');
+  $('#round').textContent = s.roundName + (s.qIndex >= 0 && s.qCount ? ` · Câu ${s.qIndex + 1}/${s.qCount}` : '');
+  showTimer(s.timer);
+
+  const mine = s.answers?.[teamId];
+  const elim = s.vcnv?.eliminated.includes(teamId);
+  const key = `${s.round}|${s.qIndex}|${!!s.q}`;
+  if (key !== qKey) { draft = ''; }
+  const inputEl = $('#ans');
+  if (inputEl) draft = inputEl.value;
+
+  let status = '';
+  if (s.buzzer.winner === teamId) status = 'Đội bạn giành quyền trả lời. Trả lời to, rõ.';
+  else if (s.buzzer.winner) status = s.teams.find(t => t.id === s.buzzer.winner).name + ' đã giành quyền.';
+  else if (s.buzzer.open) status = s.buzzer.purpose === 'steal' ? 'Có thể bấm chuông cướp điểm.' : s.buzzer.purpose === 'keyword' ? 'Có thể bấm chuông trả lời từ khóa.' : 'Chuông đã mở.';
+  else if (s.round === 'kdrieng' && s.kdrieng) status = s.kdrieng.current === teamId ? 'Lượt riêng của đội bạn: trả lời to, rõ trong thời gian quy định.' : 'Đang là lượt riêng của ' + s.teams.find(t => t.id === s.kdrieng.current).name + '.';
+  else if (s.vedich?.current === teamId && s.round === 'vedich') status = 'Lượt thi của đội bạn.' + (s.vedich.star ? ' Đang dùng Ngôi sao hy vọng.' : '');
+  if (elim) status = 'Đội bạn đã mất quyền trả lời ở phần này.';
+
+  const html = s.q ? `
+      <div class="text">${esc(s.q.text)}</div>
+      ${s.q.media?.type === 'image' ? mediaHTML(s.q.media) : s.q.media ? '<div class="status">Theo dõi hình ảnh / âm thanh trên màn hình LED.</div>' : ''}
+      ${s.q.answer ? `<div class="mine">Đáp án: ${esc(s.q.answer)}</div>` : ''}
+      ${s.accepting && !elim ? `<form class="answerForm" id="ansForm"><input id="ans" maxlength="200" autocomplete="off" placeholder="Nhập đáp án"><button class="gold">Gửi đáp án</button></form>` : ''}
+      ${mine ? `<div class="mine">Đã gửi: <b>${esc(mine.text)}</b> (${(mine.ms / 1000).toFixed(2)}s)${mine.verdict === true ? ' ✅' : mine.verdict === false ? ' ❌' : ''}</div>` : ''}
+      <div class="status">${esc(status)}</div>`
+    : `<div class="status">${s.round === 'idle' ? 'Chờ ban tổ chức bắt đầu cuộc thi.' : 'Chờ câu hỏi tiếp theo.'}</div><div class="status">${esc(status)}</div>`;
+
+  // Không vẽ lại khi đang gõ, tránh mất chữ/mất con trỏ
+  const focused = document.activeElement?.id === 'ans';
+  if (!(focused && key === qKey && s.accepting)) {
+    $('#q').innerHTML = html;
+    const f = $('#ansForm');
+    if (f) {
+      $('#ans').value = draft;
+      if (focused) $('#ans').focus();
+      f.onsubmit = e => { e.preventDefault(); const v = $('#ans').value.trim(); if (v) { socket.emit('answer', { text: v }); $('#ans').blur(); } };
+    }
+  }
+  qKey = key;
+
+  const btn = $('#buzzBtn');
+  const canBuzz = s.buzzer.open && !s.buzzer.winner && !s.buzzer.locked.includes(teamId) && !elim;
+  btn.disabled = !canBuzz;
+  btn.classList.toggle('won', s.buzzer.winner === teamId);
+  btn.textContent = s.buzzer.winner === teamId ? '🔔 ĐÃ GIÀNH QUYỀN' : '🔔 CHUÔNG';
+}
+</script>
+</body>
+</html>

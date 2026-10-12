@@ -1,0 +1,218 @@
+{
+  "competition": {
+    "_huong_dan": "Tên cuộc thi và logo hiển thị trên LED, trang đội thi, trang điều khiển. Đổi logo: chép file PNG nền trong suốt vào media/images rồi sửa đường dẫn.",
+    "name": "Cuộc thi Viện kiểm sát nhân dân khu vực 5 - Đà Nẵng",
+    "slogan": "Giỏi nghiệp vụ - Tinh thông công nghệ",
+    "logo": "/media/images/logo.png",
+    "logoSmall": "/media/images/logo-256.png",
+    "favicon": "/media/images/logo-64.png"
+  },
+  "port": 3000,
+  "adminPassword": "olan2026",
+  "mode": "PRACTICE",
+  "answerTime": 5,
+  "stealWindow": 5,
+  "teams": [
+    {
+      "name": "Đội Bản Lĩnh Số",
+      "pin": "1111"
+    },
+    {
+      "name": "Đội NHT",
+      "pin": "2222"
+    },
+    {
+      "name": "Đội ĐỘT PHÁ",
+      "pin": "3333"
+    },
+    {
+      "name": "Đội KIẾN TẠO",
+      "pin": "4444"
+    }
+  ],
+  "scoring": {
+    "kdrieng": {
+      "correct": 10
+    },
+    "khoidong": {
+      "correct": 10,
+      "wrong": 5
+    },
+    "vcnv": {
+      "row": 10,
+      "keywordByRowsOpened": [
+        80,
+        60,
+        40,
+        30,
+        20
+      ]
+    },
+    "tangtoc": [
+      40,
+      30,
+      20,
+      10
+    ],
+    "vedich": {
+      "stealWrongRatio": 0.5
+    }
+  },
+  "intros": {
+    "_huong_dan": "Video intro chạy trên LED khi chuyển phần thi. \"\" = intro dựng sẵn có logo; \"off\" = không chạy intro, chỉ phát nhạc mở đầu.",
+    "kdrieng": "/media/video/intro/khoi dong.mp4",
+    "khoidong": "/media/video/intro/khoidong-HQ.mp4",
+    "vcnv": "/media/video/intro/vuot chuong ngai vat.mp4",
+    "tangtoc": "/media/video/intro/tang toc.mp4",
+    "vedich": "/media/video/intro/ve dich.mp4",
+    "phu": ""
+  },
+  "programIntro": "/media/video/intro/intro.mp4",
+  "sounds": {
+    "_huong_dan": "Tên file trong thư mục media/sound. Muốn đổi âm thanh: thay tên file ở đây hoặc chép đè file cùng tên. Để \"\" = tắt âm thanh đó. Phần thi không khai báo thì dùng mục common. timer: âm thanh đồng hồ theo số giây. bed: nhạc nền cả lượt (Khởi động lượt riêng), tạm dừng giữa các câu. answer: khi bấm Hiện đáp án.",
+    "dir": "/media/sound/",
+    "common": {
+      "buzz": "4. chuong.mp3",
+      "correct": "1 tra loi dung.mp3",
+      "wrong": "1 tra loi sai.mp3",
+      "star": "ngoi sao hi vong.mp3",
+      "total": "tong ket diem.mp3",
+      "rank": [
+        "TONGKET1.mp3",
+        "TONGKET2.mp3",
+        "TONGKET3.mp3",
+        "TONGKET4.mp3"
+      ],
+      "answerTimer": {
+        "5": "4 5s.mp3"
+      }
+    },
+    "kdrieng": {
+      "intro": "1 mo dau.mp3",
+      "turn": "1 bat dau choi.mp3",
+      "question": "1 hien cau hoi.mp3",
+      "correct": "1 tra loi dung.mp3",
+      "wrong": "1 tra loi sai.mp3",
+      "finish": "1 hoan thanh.mp3",
+      "bed": "1-60s.mp3",
+      "answer": "2 xem dap an.mp3"
+    },
+    "khoidong": {
+      "intro": "1 mo dau.mp3",
+      "question": "1 hien cau hoi.mp3",
+      "correct": "1 tra loi dung.mp3",
+      "wrong": "1 tra loi sai.mp3",
+      "finish": "1 hoan thanh.mp3",
+      "bed": "1-60s.mp3",
+      "answer": "2 xem dap an.mp3"
+    },
+    "vcnv": {
+      "intro": "2 mo dau.mp3",
+      "select": "2 chon hang ngang (new).mp3",
+      "question": "2 mo cau hoi.mp3",
+      "timer": {
+        "15": "2 15s.mp3"
+      },
+      "answers": "2 xem dap an.mp3",
+      "correct": "2 tra loi dung(moi).mp3",
+      "reveal": "2 mo o chu.mp3",
+      "tile": "2 mo hinh anh.mp3",
+      "keyword": "2 tra loi dung(moi).mp3",
+      "picture": "2 mo hinh anh.mp3",
+      "answer": "",
+      "kwLetter": "2 mo cau hoi.mp3"
+    },
+    "tangtoc": {
+      "intro": "3 mo dau.mp3",
+      "question": "3 mo cau hoi.mp3",
+      "timer": {
+        "30": "3 30s.mp3"
+      },
+      "answers": "3 mo dap an.mp3",
+      "correct": "3 tra loi dung.mp3",
+      "wrong": "3 tra loi sai.mp3",
+      "answer": "3 mo dap an.mp3"
+    },
+    "vedich": {
+      "intro": "4 mo dau.mp3",
+      "turn": "4 bat dau choi.mp3",
+      "timer": {
+        "10": "4 10s.mp3",
+        "15": "4 15s.mp3",
+        "20": "4 20s.mp3"
+      },
+      "correct": "4 tra loi dung.mp3",
+      "wrong": "4 tra loi sai.mp3",
+      "finish": "4 hoan thanh.mp3",
+      "answer": "2 xem dap an.mp3",
+      "packages": "4 cac goi cau hoi.mp3",
+      "choosing": "4 lua chon goi cau hoi.mp3",
+      "packagePick": "4 chon goi.mp3"
+    },
+    "phu": {
+      "question": "1 hien cau hoi.mp3"
+    }
+  },
+  "transitions": {
+    "_huong_dan": "Video chuyển cảnh chạy trên LED trước khi hiện câu hỏi; sec = độ dài video (giây), đồng hồ chỉ chạy sau khi video xong. Để src \"\" là tắt.",
+    "kdrieng": {
+      "src": "",
+      "sec": 5
+    },
+    "khoidong": {
+      "src": "",
+      "sec": 5
+    },
+    "vcnv": {
+      "src": "",
+      "sec": 3.84
+    },
+    "tangtoc": {
+      "src": "",
+      "sec": 4.68
+    }
+  },
+  "vedichPackages": {
+    "_huong_dan": "Cơ cấu điểm từng câu trong mỗi gói Về đích; câu hỏi lấy lần lượt từ ngân hàng 10/20/30 điểm chưa dùng.",
+    "40": [
+      10,
+      10,
+      20
+    ],
+    "60": [
+      10,
+      20,
+      30
+    ],
+    "80": [
+      20,
+      30,
+      30
+    ]
+  },
+  "packageScreens": {
+    "_huong_dan": "Để src \"\" (mặc định) thì LED dùng màn hình chọn gói dựng sẵn; animSec = thời gian hiệu ứng ẩn gói trước khi hiện câu hỏi.",
+    "choose": {
+      "src": "",
+      "sec": 4.84
+    },
+    "40": {
+      "src": "",
+      "sec": 8.48
+    },
+    "60": {
+      "src": "",
+      "sec": 8.48
+    },
+    "80": {
+      "src": "",
+      "sec": 8.48
+    },
+    "animSec": 2.6
+  },
+  "vcnvSkin": {
+    "_huong_dan": "center: ảnh ô trung tâm che giữa hình, chỉ mở khi từ khóa được công bố đủ. tiles: (không bắt buộc) 4 ảnh mặt ô góc theo thứ tự 1 trên trái, 2 trên phải, 3 dưới phải, 4 dưới trái; để trống thì dùng mặt kim loại dựng sẵn.",
+    "tiles": [],
+    "center": "/media/images/vcnv/o-trung-tam.jpg"
+  }
+}
