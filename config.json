@@ -14,7 +14,7 @@
   "stealWindow": 5,
   "teams": [
     {
-      "name": "Đội Bản Lĩnh Số",
+      "name": "ĐỘI BẢN LĨNH SỐ",
       "pin": "1111"
     },
     {
@@ -60,11 +60,11 @@
   },
   "intros": {
     "_huong_dan": "Video intro chạy trên LED khi chuyển phần thi. \"\" = intro dựng sẵn có logo; \"off\" = không chạy intro, chỉ phát nhạc mở đầu.",
-    "kdrieng": "/media/video/intro/khoi dong.mp4",
+    "kdrieng": "/media/video/intro/Khởi động v2.mp4",
     "khoidong": "/media/video/intro/khoidong-HQ.mp4",
-    "vcnv": "/media/video/intro/vuot chuong ngai vat.mp4",
-    "tangtoc": "/media/video/intro/tang toc.mp4",
-    "vedich": "/media/video/intro/ve dich.mp4",
+    "vcnv": "/media/video/intro/VCNV v2.mp4",
+    "tangtoc": "/media/video/intro/tăng tốc v2.mp4",
+    "vedich": "/media/video/intro/Về đích v2.mp4",
     "phu": ""
   },
   "programIntro": "/media/video/intro/intro.mp4",

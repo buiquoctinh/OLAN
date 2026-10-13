@@ -23,6 +23,18 @@ Cửa sổ dòng lệnh sẽ in địa chỉ LAN, ví dụ `http://192.168.1.10:
 **Windows:** lần chạy đầu, cho phép Node.js qua Windows Firewall (mạng Private), nếu không các máy khác sẽ không vào được.
 Nên đặt IP tĩnh cho máy chủ để địa chỉ không đổi giữa các buổi.
 
+## Chạy trên Render.com
+
+Repository đã có `render.yaml`. Để tạo dịch vụ:
+
+1. Đẩy mã nguồn lên GitHub.
+2. Trên Render, chọn **New → Blueprint**, kết nối repository này và xác nhận tạo dịch vụ `olympia-o-lan`.
+3. Sau khi deploy thành công, mở URL `onrender.com` được Render cấp; thêm `/admin`, `/led` hoặc `/team/1` để vào từng màn hình.
+
+Render tự cấp cổng qua biến môi trường `PORT`; server sẽ dùng cổng đó thay vì cổng trong `config.json`. Socket.IO được dùng cho cập nhật trực tiếp giữa các màn hình.
+
+**Lưu ý:** gói Free có thể đưa dịch vụ vào trạng thái ngủ khi không hoạt động và không giữ các thay đổi trên ổ đĩa sau khi deploy/restart. Vì vậy, ngân hàng câu hỏi và cấu hình nên được cập nhật trong mã nguồn rồi đẩy lên GitHub trước khi deploy. Những chỉnh sửa ngân hàng câu hỏi, điểm/trạng thái thi và file media tải lên trực tiếp khi ứng dụng đang chạy có thể bị mất; không nên dùng gói Free cho một cuộc thi cần lưu dữ liệu lâu dài.
+
 ## Cấu hình — `config.json`
 
 - `competition`: tên cuộc thi, khẩu hiệu và logo (hiện trên LED, màn hình chờ, intro, trang đội thi, trang điều khiển và biểu tượng tab trình duyệt). Logo nằm ở `media/images/logo.png` (nền trong suốt), kèm bản nhỏ `logo-256.png` và `logo-64.png`.

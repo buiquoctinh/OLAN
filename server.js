@@ -14,6 +14,7 @@ const ROOT = __dirname;
 const DATA = path.join(ROOT, 'data');
 const readJSON = f => JSON.parse(fs.readFileSync(f, 'utf8'));
 const config = readJSON(path.join(ROOT, 'config.json'));
+const PORT = Number(process.env.PORT || config.port);
 let Q = readJSON(path.join(DATA, 'questions.json'));
 
 const app = express();
@@ -28,7 +29,7 @@ app.get('/admin', page('admin.html'));
 app.get('/led', page('led.html'));
 app.get('/team/:id', page('team.html'));
 app.get('/api/info', (req, res) => res.json({
-  port: config.port,
+  port: PORT,
   ips: lanIPs(),
   teams: config.teams.map((t, i) => ({ id: i + 1, name: t.name })),
   competition: config.competition || {}
@@ -929,7 +930,7 @@ function view(role, teamId) {
     v.vedichPool = Object.fromEntries(Object.entries(Q.vedich || {}).map(([k, arr]) =>
       [k, arr.length - ((state.vedich.used[k] || []).length)]));
     v.history = state.history;
-    v.ips = lanIPs(); v.port = config.port;
+    v.ips = lanIPs(); v.port = PORT;
     v.sounds = soundFiles();
     v.hasProgramIntro = !!config.programIntro;
     v.notice = state.notice || '';
@@ -988,9 +989,9 @@ io.on('connection', s => {
   s.on('disconnect', () => broadcast());
 });
 
-server.listen(config.port, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
   const ips = lanIPs();
-  const base = ips.length ? ips.map(ip => `http://${ip}:${config.port}`) : [`http://localhost:${config.port}`];
+  const base = ips.length ? ips.map(ip => `http://${ip}:${PORT}`) : [`http://localhost:${PORT}`];
   console.log('\n  OLYMPIA APP – O LAN đang chạy\n');
   for (const b of base) {
     console.log(`  Quản trị : ${b}/admin`);
